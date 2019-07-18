@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.rupniewski.service_server.exception.ResourceNotFundException;
+import pl.rupniewski.service_server.model.Authorities;
 import pl.rupniewski.service_server.model.Users;
+import pl.rupniewski.service_server.repository.AuthoritiesRepository;
 import pl.rupniewski.service_server.repository.UsersRepository;
 
 import java.util.List;
@@ -17,6 +19,9 @@ public class UsersController {
 
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private AuthoritiesRepository authoritiesRepository;
 
     @GetMapping(value = "")
     public List<Users> getAllUsers() {
@@ -40,6 +45,7 @@ public class UsersController {
 
     @PostMapping(value = "")
     public Users addUser(@RequestBody Users users) {
+        authoritiesRepository.save(new Authorities(users.getUsername(), "ADMIN"));
         return usersRepository.save(users);
     }
 
