@@ -37,7 +37,6 @@ public class FileController {
     @PostMapping(value = "/uploadFile", consumes = "multipart/form-data" )
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
         String fileName = fileStorageService.storeFile(file);
-
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
                 .path(fileName)
@@ -59,7 +58,7 @@ public class FileController {
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
-
+        System.out.println(resource.toString());
         // Try to determine file's content type
         String contentType = null;
         try {
