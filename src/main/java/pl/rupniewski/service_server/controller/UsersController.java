@@ -10,6 +10,8 @@ import pl.rupniewski.service_server.model.Users;
 import pl.rupniewski.service_server.repository.AuthoritiesRepository;
 import pl.rupniewski.service_server.repository.UsersRepository;
 
+import javax.servlet.http.HttpServletResponse;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @RestController
@@ -44,9 +46,16 @@ public class UsersController {
     }
 
     @PostMapping(value = "")
-    public Users addUser(@RequestBody Users users) {
-        authoritiesRepository.save(new Authorities(users.getUsername(), "ADMIN"));
-        return usersRepository.save(users);
+    public Users addUser(@RequestBody Users users, HttpServletResponse response) {
+        try {
+            usersRepository.save(users);
+            authoritiesRepository.save(new Authorities(users.getUsername(), "USER"));
+            response.setStatus(HttpServletResponse.SC_CREATED);
+        }
+        catch (Exception e){
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+        }
+        return users;
     }
 
     @PutMapping("/{id}")
