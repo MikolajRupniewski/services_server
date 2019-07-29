@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -12,7 +13,7 @@ import java.io.Serializable;
 public class Users implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -174,5 +175,44 @@ public class Users implements Serializable {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String toJson(){
+        return "{\n" +
+                "\t\"firstName\": \"" + firstName + "\",\n" +
+                "\t\"lastName\": \"" + lastName + "\",\n" +
+                "\t\"phoneNumber\": \"" + phoneNumber + "\",\n" +
+                "\t\"zipCode\": \"" + zipCode + "\",\n" +
+                "\t\"city\": \"" + city + "\",\n" +
+                "\t\"streetName\": \"" + streetName + "\",\n" +
+                "\t\"houseNumber\": \"" + houseNumber + "\",\n" +
+                "\t\"apartmentNumber\": \"" + apartmentNumber + "\",\n" +
+                "\t\"username\": \"" + username + "\",\n" +
+                "\t\"password\": \"" + password + "\",\n" +
+                "\t\"enabled\": " + enabled +
+                "\n}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Users)) return false;
+        Users users = (Users) o;
+        return isEnabled() == users.isEnabled() &&
+                Objects.equals(getFirstName(), users.getFirstName()) &&
+                Objects.equals(getLastName(), users.getLastName()) &&
+                Objects.equals(getPhoneNumber(), users.getPhoneNumber()) &&
+                Objects.equals(getZipCode(), users.getZipCode()) &&
+                Objects.equals(getCity(), users.getCity()) &&
+                Objects.equals(getStreetName(), users.getStreetName()) &&
+                Objects.equals(getHouseNumber(), users.getHouseNumber()) &&
+                Objects.equals(getApartmentNumber(), users.getApartmentNumber()) &&
+                Objects.equals(getUsername(), users.getUsername()) &&
+                Objects.equals(getPassword(), users.getPassword());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFirstName(), getLastName(), getPhoneNumber(), getZipCode(), getCity(), getStreetName(), getHouseNumber(), getApartmentNumber(), getUsername(), getPassword(), isEnabled());
     }
 }

@@ -55,7 +55,7 @@ public class UsersController {
         catch (Exception e){
             response.setStatus(HttpServletResponse.SC_CONFLICT);
         }
-        return users;
+        return usersRepository.save(users);
     }
 
     @PutMapping("/{id}")
@@ -81,6 +81,8 @@ public class UsersController {
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User","id",id));
         usersRepository.delete(users);
+        Authorities authorities = authoritiesRepository.findByUsername(users.getUsername());
+        authoritiesRepository.delete(authorities);
         return ResponseEntity.ok().build();
     }
 }
