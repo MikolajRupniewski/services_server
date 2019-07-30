@@ -3,6 +3,7 @@ package pl.rupniewski.service_server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import pl.rupniewski.service_server.properties.FileStorageProperties;
 
 import java.util.Comparator;
@@ -16,6 +17,7 @@ import java.util.TreeSet;
 public class ServiceServerApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(ServiceServerApplication.class, args);
 	}
 }

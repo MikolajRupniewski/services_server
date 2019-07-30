@@ -1,10 +1,9 @@
 package pl.rupniewski.service_server.model;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Category implements Serializable {
 
@@ -16,6 +15,9 @@ public class Category implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @ManyToMany(mappedBy = "categories")
+    private List<Service> posts = new ArrayList<>();
+    
     public Category(String name) {
         this.name = name;
     }

@@ -5,16 +5,14 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.rupniewski.service_server.model.Authorities;
 import pl.rupniewski.service_server.model.Users;
 import pl.rupniewski.service_server.repository.AuthoritiesRepository;
 import pl.rupniewski.service_server.repository.UsersRepository;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
