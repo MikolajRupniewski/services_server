@@ -3,19 +3,15 @@ package pl.rupniewski.service_server.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Users implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class Users extends BaseModel {
 
     @Column(name = "first_name", nullable = false, length = 64)
     private String firstName;
@@ -38,7 +34,7 @@ public class Users implements Serializable {
     @Column(name = "house_number", nullable = false, length = 8)
     private String houseNumber;
 
-    @Column(name = "apartment_number", nullable = true, length = 10)
+    @Column(name = "apartment_number", length = 10)
     private String apartmentNumber;
 
     @Column(name = "username", nullable = false, length = 64, unique = true)
@@ -63,7 +59,6 @@ public class Users implements Serializable {
         this.password = password;
         this.enabled = enabled;
     }
-
     public Users(Users users) {
         this.firstName = users.firstName;
         this.lastName = users.lastName;
@@ -79,120 +74,73 @@ public class Users implements Serializable {
     }
     public Users() {
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getFirstName() {
         return firstName;
     }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-
     public String getLastName() {
         return lastName;
     }
-
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
-
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-
     public String getZipCode() {
         return zipCode;
     }
-
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
-
     public String getCity() {
         return city;
     }
-
     public void setCity(String city) {
         this.city = city;
     }
-
     public String getStreetName() {
         return streetName;
     }
-
     public void setStreetName(String streetName) {
         this.streetName = streetName;
     }
-
     public String getHouseNumber() {
         return houseNumber;
     }
-
     public void setHouseNumber(String houseNumber) {
         this.houseNumber = houseNumber;
     }
-
     public String getApartmentNumber() {
         return apartmentNumber;
     }
-
     public void setApartmentNumber(String apartmentNumber) {
         this.apartmentNumber = apartmentNumber;
     }
-
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }
-
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         this.password = bCryptPasswordEncoder.encode(password);
     }
-
     public boolean isEnabled() {
         return enabled;
     }
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
-    public String toJson(){
-        return "{\n" +
-                "\t\"firstName\": \"" + firstName + "\",\n" +
-                "\t\"lastName\": \"" + lastName + "\",\n" +
-                "\t\"phoneNumber\": \"" + phoneNumber + "\",\n" +
-                "\t\"zipCode\": \"" + zipCode + "\",\n" +
-                "\t\"city\": \"" + city + "\",\n" +
-                "\t\"streetName\": \"" + streetName + "\",\n" +
-                "\t\"houseNumber\": \"" + houseNumber + "\",\n" +
-                "\t\"apartmentNumber\": \"" + apartmentNumber + "\",\n" +
-                "\t\"username\": \"" + username + "\",\n" +
-                "\t\"password\": \"" + password + "\",\n" +
-                "\t\"enabled\": " + enabled +
-                "\n}";
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -210,7 +158,6 @@ public class Users implements Serializable {
                 Objects.equals(getUsername(), users.getUsername()) &&
                 Objects.equals(getPassword(), users.getPassword());
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(getFirstName(), getLastName(), getPhoneNumber(), getZipCode(), getCity(), getStreetName(), getHouseNumber(), getApartmentNumber(), getUsername(), getPassword(), isEnabled());

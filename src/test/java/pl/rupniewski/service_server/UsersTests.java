@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class UsersTests extends AbstractTest {
+public class UsersTests extends BaseTest {
 
     private final Users dummyUser = new Users("Maciej","Kowal","556848526",
             "90-711","Lodz","Zachodnia",
@@ -73,7 +73,7 @@ public class UsersTests extends AbstractTest {
         System.out.println(uri);
         Users userToUpdate = tempUsers.get(1);
         userToUpdate.setUsername("kajanowa");
-        String inputJson = userToUpdate.toJson();
+        String inputJson = super.mapToJson(userToUpdate);
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
         int status = mvcResult.getResponse().getStatus();
@@ -123,7 +123,7 @@ public class UsersTests extends AbstractTest {
         List<Users> tempUsers = usersRepository.findAll();
         Users userToUpdate = tempUsers.get(1);
         userToUpdate.setUsername("kajanowa");
-        String inputJson = userToUpdate.toJson();
+        String inputJson = super.mapToJson(userToUpdate);
         String uri = "/users/" + Long.MAX_VALUE;
         System.out.println(uri);
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)

@@ -8,10 +8,10 @@ import pl.rupniewski.service_server.exception.ResourceNotFundException;
 import pl.rupniewski.service_server.model.Authorities;
 import pl.rupniewski.service_server.model.Users;
 import pl.rupniewski.service_server.repository.AuthoritiesRepository;
+import pl.rupniewski.service_server.repository.ServiceRepository;
 import pl.rupniewski.service_server.repository.UsersRepository;
 
 import javax.servlet.http.HttpServletResponse;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @RestController
@@ -24,6 +24,9 @@ public class UsersController {
 
     @Autowired
     private AuthoritiesRepository authoritiesRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     @GetMapping(value = "")
     public List<Users> getAllUsers() {
