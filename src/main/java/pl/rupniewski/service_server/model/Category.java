@@ -13,17 +13,21 @@ public class Category extends BaseModel {
 
     @Column(name = "name")
     private String name;
+
     @ManyToMany(mappedBy = "categories")
     private List<Shop> shops = new ArrayList<>();
 
     public Category(String name) {
         this.name = name;
     }
+
     public Category() {
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }

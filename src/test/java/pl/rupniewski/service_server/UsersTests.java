@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UsersTests extends BaseTest {
 
-    private final Users dummyUser = new Users("Maciej","Kowal","556848526",
+    private final Users dummyUser = new Users("Maciej","Kowal","maciekkowal@gmail.com","556848526",
             "90-711","Lodz","Zachodnia",
             "14","16","maciek","maciek123",true);
 
@@ -196,16 +196,16 @@ public class UsersTests extends BaseTest {
         assertEquals(users.length, 0);
     }
     private List<Users> getDummyUsers(){
-        Users user1 = new Users("Mikolaj","Rupniewski","570568484",
-                "97-200","Tomaszow Mazowiecki","Polna",
+        Users user1 = new Users("Mikolaj","Rupniewski","mikolajrupniewski@gmail.com",
+                "570568484","97-200","Tomaszow Mazowiecki","Polna",
                 "14","16","mikolaj","mikolaj123",true);
-        Users user2 = new Users("Adam","Kowal","666555444",
+        Users user2 = new Users("Adam","Kowal","adamkowal@gmail.com","666555444",
                 "97-200","Tomaszow Mazowiecki","Polna",
                 "14","16","adam","adam123",true);
-        Users user3 = new Users("Monika","Rybska","555444685",
+        Users user3 = new Users("Monika","Rybska","monikarybska@gmail.com","555444685",
                 "97-200","Tomaszow Mazowiecki","Polna",
                 "14","16","monika","monika123",true);
-        Users user4 = new Users("Kaja","Rymka","556845954",
+        Users user4 = new Users("Kaja","Rymka","kajarymka@gmail.com","556845954",
                 "90-711","Lodz","Zachodnia",
                 "14","16","kaja","kaja123",true);
         return Arrays.asList(user1,user2,user3, user4);

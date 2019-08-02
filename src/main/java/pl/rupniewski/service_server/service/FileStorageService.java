@@ -7,8 +7,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import pl.rupniewski.service_server.exception.MyFileNotFoundException;
 import pl.rupniewski.service_server.exception.FileStorageException;
+import pl.rupniewski.service_server.exception.MyFileNotFoundException;
 import pl.rupniewski.service_server.properties.FileStorageProperties;
 
 import java.io.IOException;
@@ -22,6 +22,7 @@ import java.nio.file.StandardCopyOption;
 public class FileStorageService {
 
     private final Path fileStorageLocation;
+
     @Autowired
     public FileStorageService(FileStorageProperties fileStorageProperties) {
         this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
@@ -37,7 +38,7 @@ public class FileStorageService {
     public String storeFile(MultipartFile file) {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         try {
-            if(fileName.contains("..")) {
+            if (fileName.contains("..")) {
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
             }
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
@@ -52,7 +53,7 @@ public class FileStorageService {
         try {
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
-            if(resource.exists()) {
+            if (resource.exists()) {
                 return resource;
             } else {
                 throw new MyFileNotFoundException("File not found " + fileName);

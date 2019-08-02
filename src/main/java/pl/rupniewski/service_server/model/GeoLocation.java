@@ -10,6 +10,7 @@ public class GeoLocation extends BaseModel {
 
     @Column(name = "longitude")
     private float longitude;
+
     @Column(name = "latitude")
     private float latitude;
 
@@ -17,17 +18,22 @@ public class GeoLocation extends BaseModel {
         this.longitude = longitude;
         this.latitude = latitude;
     }
+
     public GeoLocation() {
     }
+
     public float getLongitude() {
         return longitude;
     }
+
     public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
+
     public float getLatitude() {
         return latitude;
     }
+
     public void setLatitude(float latitude) {
         this.latitude = latitude;
     }

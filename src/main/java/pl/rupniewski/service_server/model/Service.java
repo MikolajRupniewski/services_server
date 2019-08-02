@@ -11,12 +11,16 @@ public class Service extends BaseModel {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @Column(name = "name")
     private String name;
+
     @Column(name = "duration")
     private Duration duration;
+
     @Column(name = "price", scale = 2)
     private Double price;
+
     @ManyToOne(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE

@@ -7,12 +7,12 @@ import pl.rupniewski.service_server.properties.FileStorageProperties;
 
 @SpringBootApplication
 @EnableConfigurationProperties({
-		FileStorageProperties.class
+        FileStorageProperties.class
 })
 public class ServiceServerApplication {
 
 
-	public static void main(String[] args) {
-		SpringApplication.run(ServiceServerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ServiceServerApplication.class, args);
+    }
 }

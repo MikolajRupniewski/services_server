@@ -1,10 +1,11 @@
 package pl.rupniewski.service_server.model;
 
+import org.springframework.context.annotation.Scope;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 
 
 @Entity
@@ -25,7 +26,7 @@ public class Shop extends BaseModel {
 
     @ElementCollection
     @Column(name = "pictures")
-    private List<String>  pictures = new LinkedList<>();
+    private List<String> pictures = new LinkedList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "service_place")

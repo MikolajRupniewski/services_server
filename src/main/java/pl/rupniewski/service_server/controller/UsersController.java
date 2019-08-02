@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.rupniewski.service_server.exception.ResourceNotFundException;
 import pl.rupniewski.service_server.model.Authorities;
+import pl.rupniewski.service_server.model.EnabledUsers;
 import pl.rupniewski.service_server.model.Users;
 import pl.rupniewski.service_server.repository.AuthoritiesRepository;
+import pl.rupniewski.service_server.repository.EnabledUsersRepository;
 import pl.rupniewski.service_server.repository.ServiceRepository;
 import pl.rupniewski.service_server.repository.UsersRepository;
 
@@ -27,6 +29,9 @@ public class UsersController {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    private EnabledUsersRepository enabledUsersRepository;
 
     @GetMapping(value = "")
     public List<Users> getAllUsers() {
@@ -48,14 +53,16 @@ public class UsersController {
         return usersRepository.findByZipCode(zipCode);
     }
 
-    @PostMapping(value = "")
+    @PostMapping(value = "/")
     public Users addUser(@RequestBody Users users, HttpServletResponse response) {
         try {
+            EnabledUsers enabledUsers = new EnabledUsers(users.getEmail());
+            enabledUsersRepository.save(enabledUsers);
+            users.setEnabled(false);
             usersRepository.save(users);
             authoritiesRepository.save(new Authorities(users.getUsername(), "USER"));
             response.setStatus(HttpServletResponse.SC_CREATED);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
         }
         return usersRepository.save(users);
@@ -63,7 +70,7 @@ public class UsersController {
 
     @PutMapping("/{id}")
     public Users updateUser(@RequestBody Users users, @PathVariable Long id) {
-        Users updatedUser = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User","id", id));
+        Users updatedUser = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
         updatedUser.setFirstName(users.getFirstName());
         updatedUser.setLastName(users.getLastName());
         updatedUser.setPhoneNumber(users.getPhoneNumber());
@@ -71,7 +78,7 @@ public class UsersController {
         updatedUser.setCity(users.getCity());
         updatedUser.setStreetName(users.getStreetName());
         updatedUser.setHouseNumber(users.getHouseNumber());
-        if(users.getApartmentNumber() != null) {
+        if (users.getApartmentNumber() != null) {
             updatedUser.setApartmentNumber(users.getApartmentNumber());
         }
         updatedUser.setUsername(users.getUsername());
@@ -82,7 +89,7 @@ public class UsersController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User","id",id));
+        Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
         usersRepository.delete(users);
         Authorities authorities = authoritiesRepository.findByUsername(users.getUsername());
         authoritiesRepository.delete(authorities);
