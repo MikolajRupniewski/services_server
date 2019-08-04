@@ -53,21 +53,6 @@ public class UsersController {
         return usersRepository.findByZipCode(zipCode);
     }
 
-    @PostMapping(value = "/")
-    public Users addUser(@RequestBody Users users, HttpServletResponse response) {
-        try {
-            EnabledUsers enabledUsers = new EnabledUsers(users.getEmail());
-            enabledUsersRepository.save(enabledUsers);
-            users.setEnabled(false);
-            usersRepository.save(users);
-            authoritiesRepository.save(new Authorities(users.getUsername(), "USER"));
-            response.setStatus(HttpServletResponse.SC_CREATED);
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
-        }
-        return usersRepository.save(users);
-    }
-
     @PutMapping("/{id}")
     public Users updateUser(@RequestBody Users users, @PathVariable Long id) {
         Users updatedUser = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));

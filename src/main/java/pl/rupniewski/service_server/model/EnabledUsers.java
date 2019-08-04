@@ -9,32 +9,32 @@ import java.util.UUID;
 @Table(name = "enabled_users")
 public class EnabledUsers extends BaseModel{
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "email")
+    private String email;
 
     @Column(name = "uuid")
     private String uuid;
 
-    public EnabledUsers(String username) {
-        this.username = username;
+    public EnabledUsers(String email) {
+        this.email = email;
         UUID uuid = UUID.randomUUID();
         this.uuid = uuid.toString();
     }
 
-    public EnabledUsers(String username, String uuid) {
-        this.username = username;
+    public EnabledUsers(String email, String uuid) {
+        this.email = email;
         this.uuid = uuid;
     }
 
     public EnabledUsers() {
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUuid() {
