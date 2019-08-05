@@ -10,8 +10,6 @@ import pl.rupniewski.service_server.properties.FileStorageProperties;
         FileStorageProperties.class
 })
 public class ServiceServerApplication {
-
-
     public static void main(String[] args) {
         SpringApplication.run(ServiceServerApplication.class, args);
     }
