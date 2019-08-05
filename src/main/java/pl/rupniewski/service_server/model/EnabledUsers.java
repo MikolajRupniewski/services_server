@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "enabled_users")
-public class EnabledUsers extends BaseModel{
+public class EnabledUsers extends BaseModel {
 
     @Column(name = "email")
     private String email;
@@ -41,12 +41,12 @@ public class EnabledUsers extends BaseModel{
         return uuid;
     }
 
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     public void setUuid() {
         UUID uuid = UUID.randomUUID();
         this.uuid = uuid.toString();
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 }

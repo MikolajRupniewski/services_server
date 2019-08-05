@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import pl.rupniewski.service_server.BaseTest;
 import pl.rupniewski.service_server.model.Users;
 
 import java.util.Collections;
@@ -43,6 +42,7 @@ class AuthenticateControllerTest extends BaseTest {
         String content = mvcResult.getResponse().getContentAsString();
         System.out.println(content);
     }
+
     @Test
     public void G_TestUpdateUserByIdInvalid() throws Exception {
         List<Users> tempUsers = usersRepository.findAll();
@@ -58,6 +58,7 @@ class AuthenticateControllerTest extends BaseTest {
         String content = mvcResult.getResponse().getContentAsString();
         System.out.println(content);
     }
+
     @Test
     public void H_TestDeleteInvalidUser() throws Exception {
         String uri = "/users/" + Long.MAX_VALUE;

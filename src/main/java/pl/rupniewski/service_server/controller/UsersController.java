@@ -1,37 +1,16 @@
 package pl.rupniewski.service_server.controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.rupniewski.service_server.exception.ResourceNotFundException;
-import pl.rupniewski.service_server.model.Authorities;
-import pl.rupniewski.service_server.model.EnabledUsers;
 import pl.rupniewski.service_server.model.Users;
-import pl.rupniewski.service_server.repository.AuthoritiesRepository;
-import pl.rupniewski.service_server.repository.EnabledUsersRepository;
-import pl.rupniewski.service_server.repository.ServiceRepository;
-import pl.rupniewski.service_server.repository.UsersRepository;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 
-public class UsersController {
-
-    @Autowired
-    private UsersRepository usersRepository;
-
-    @Autowired
-    private AuthoritiesRepository authoritiesRepository;
-
-    @Autowired
-    private ServiceRepository serviceRepository;
-
-    @Autowired
-    private EnabledUsersRepository enabledUsersRepository;
+public class UsersController extends BaseController {
 
     @GetMapping(value = "")
     public List<Users> getAllUsers() {
@@ -43,12 +22,12 @@ public class UsersController {
         return usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
     }
 
-    @GetMapping(value = "", params = "city")
+    @GetMapping(value = "", params = {"city"})
     public List<Users> getUsersByCity(String city) {
         return usersRepository.findByCity(city);
     }
 
-    @GetMapping(value = "", params = "zipCode")
+    @GetMapping(value = "", params = {"zipCode"})
     public List<Users> getUsersByZipCode(String zipCode) {
         return usersRepository.findByZipCode(zipCode);
     }

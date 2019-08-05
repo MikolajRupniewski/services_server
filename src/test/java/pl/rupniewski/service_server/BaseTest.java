@@ -25,13 +25,13 @@ import java.io.IOException;
 public abstract class BaseTest {
     MockMvc mvc;
     @Autowired
-    private WebApplicationContext webApplicationContext;
-    @Autowired
     UsersRepository usersRepository;
     @Autowired
     AuthoritiesRepository authoritiesRepository;
     @Autowired
     EnabledUsersRepository enabledUsersRepository;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     public void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();

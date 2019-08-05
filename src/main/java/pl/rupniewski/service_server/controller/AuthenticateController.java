@@ -1,22 +1,18 @@
 package pl.rupniewski.service_server.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.rupniewski.service_server.exception.ResourceNotFundException;
 import pl.rupniewski.service_server.model.Authorities;
 import pl.rupniewski.service_server.model.EnabledUsers;
 import pl.rupniewski.service_server.model.Users;
-import pl.rupniewski.service_server.repository.AuthoritiesRepository;
-import pl.rupniewski.service_server.repository.EnabledUsersRepository;
-import pl.rupniewski.service_server.repository.UsersRepository;
 
 import javax.mail.*;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 
 /*
@@ -37,51 +33,43 @@ import java.util.Properties;
  */
 @RestController
 @RequestMapping(value = "/authenticate")
-public class AuthenticateController {
+public class AuthenticateController extends BaseController {
     private final String SUBJECT_ENABLE_USER = "[Services] Verify account";
     private final String HEADER_ENABLE_USER = "Account's verification";
     private final String SUBJECT_RESET_USER_PASSWORD = "[Services] Reset password";
     private final String HEADER_RESET_USER_PASSWORD = "Account's new password";
-
-    @Autowired
-    private UsersRepository usersRepository;
-
-    @Autowired
-    private AuthoritiesRepository authoritiesRepository;
-
-    @Autowired
-    private EnabledUsersRepository enabledUsersRepository;
-
+    private final Logger LOGGER = Logger.getLogger(AuthenticateController.class.getName());
 
     @PostMapping(value = "/register")
     public Users addUser(@RequestBody Users users, HttpServletResponse response) {
+        LOGGER.info("Starting registering new user");
         Users duplicate = usersRepository.findByUsername(users.getUsername());
-        if(usersRepository.findByUsername(users.getUsername()) != null
-                || usersRepository.findByEmail(users.getEmail()) != null ){
+        if (usersRepository.findByUsername(users.getUsername()) != null
+                || usersRepository.findByEmail(users.getEmail()) != null) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
+            LOGGER.warning("Email or username is already taken");
             return null;
         }
-        try {
-            users.setEnabled(false);
-            usersRepository.save(users);
-            response.setStatus(HttpServletResponse.SC_CREATED);
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
-        }
+        users.setEnabled(false);
+        usersRepository.save(users);
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        LOGGER.info("User created");
         EnabledUsers enabledUsers = new EnabledUsers(users.getEmail());
         enabledUsersRepository.save(enabledUsers);
         authoritiesRepository.save(new Authorities(users.getUsername(), "USER"));
-        Thread t1 = new Thread(() -> sendEmail(enabledUsers.getEmail(),SUBJECT_ENABLE_USER, HEADER_ENABLE_USER, getEmailBodyForEnableUser(enabledUsers)));
+        Thread t1 = new Thread(() -> sendEmail(enabledUsers.getEmail(), SUBJECT_ENABLE_USER, HEADER_ENABLE_USER, getEmailBodyForEnableUser(enabledUsers)));
         t1.start();
+        LOGGER.info("Confirmation email sent");
         return usersRepository.save(users);
     }
+
     @GetMapping(value = "/enable-user")
     public String enableUser(@RequestParam String email, @RequestParam String uuid, HttpServletResponse response) {
         EnabledUsers enabledUsers = enabledUsersRepository.findByEmail(email);
-        if(enabledUsers != null) {
-            if(enabledUsers.getUuid().equals(uuid)){
+        if (enabledUsers != null) {
+            if (enabledUsers.getUuid().equals(uuid)) {
                 Users users = usersRepository.findByEmail(email);
-                if(users.isEnabled()){
+                if (users.isEnabled()) {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     return "User already verified";
                 }
@@ -89,17 +77,16 @@ public class AuthenticateController {
                 usersRepository.save(users);
                 response.setStatus(HttpServletResponse.SC_OK);
                 return "Successfully verified user";
-            }
-            else {
+            } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return "Bad verification code";
             }
-        }
-        else {
+        } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "User not found";
         }
     }
+
     @DeleteMapping("/delete-user/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
@@ -119,18 +106,22 @@ public class AuthenticateController {
     }
 
     @GetMapping("/reset-password/{id}")
-    public String resetUserPassword(@PathVariable Long id) {
+    public String resetUserPassword(@PathVariable Long id, String email) {
         Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
-        String newPassword = Long.toHexString(Double.doubleToLongBits(Math.random())).substring(0,8);
+        if (!users.getEmail().equals(email)) {
+            LOGGER.warning("Wrong email address");
+            return "Wrong email address";
+        }
+        String newPassword = Long.toHexString(Double.doubleToLongBits(Math.random())).substring(0, 8);
         users.setPassword(newPassword);
         Thread t1 = new Thread(() -> sendEmail(users.getEmail(), SUBJECT_RESET_USER_PASSWORD, HEADER_RESET_USER_PASSWORD, getEmailBodyForResetPasswod(newPassword)));
         t1.start();
         usersRepository.save(users);
-        return "Email sent";
+        return "Email has been sent";
     }
 
 
-    private void sendEmail(String addressee, String subject, String header, String body ) {
+    private void sendEmail(String addressee, String subject, String header, String body) {
         final String username = "services.wfis@gmail.com";
         final String password = "Karconko123,";
 
@@ -166,13 +157,15 @@ public class AuthenticateController {
             System.out.println("Done");
 
         } catch (MessagingException e) {
-            e.printStackTrace();
+            LOGGER.warning("Email was not sent: " + e.getMessage());
         }
     }
+
     private String getEmailBodyForEnableUser(EnabledUsers enabledUsers) {
-        String href = String.format("<a href='http://localhost:8080/authenticate/enable-user?email=%s&uuid=%s'>Confirm your email</a>",enabledUsers.getEmail(), enabledUsers.getUuid());
+        String href = String.format("<a href='http://localhost:8080/authenticate/enable-user?email=%s&uuid=%s'>Confirm your email</a>", enabledUsers.getEmail(), enabledUsers.getUuid());
         return "To confirm your email please follow this link:" + href;
     }
+
     private String getEmailBodyForResetPasswod(String password) {
         return String.format("Your new password is: <b>%s</b>", password);
     }

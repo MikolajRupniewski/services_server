@@ -1,7 +1,5 @@
 package pl.rupniewski.service_server.model;
 
-import org.springframework.context.annotation.Scope;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
