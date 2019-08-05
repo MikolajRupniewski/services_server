@@ -1,7 +1,9 @@
 package pl.rupniewski.service_server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.rupniewski.service_server.exception.ResourceNotFundException;
 import pl.rupniewski.service_server.model.Authorities;
 import pl.rupniewski.service_server.model.EnabledUsers;
 import pl.rupniewski.service_server.model.Users;
@@ -36,6 +38,10 @@ import java.util.Properties;
 @RestController
 @RequestMapping(value = "/authenticate")
 public class AuthenticateController {
+    private final String SUBJECT_ENABLE_USER = "[Services] Verify account";
+    private final String HEADER_ENABLE_USER = "Account's verification";
+    private final String SUBJECT_RESET_USER_PASSWORD = "[Services] Reset password";
+    private final String HEADER_RESET_USER_PASSWORD = "Account's new password";
 
     @Autowired
     private UsersRepository usersRepository;
@@ -45,6 +51,7 @@ public class AuthenticateController {
 
     @Autowired
     private EnabledUsersRepository enabledUsersRepository;
+
 
     @PostMapping(value = "/register")
     public Users addUser(@RequestBody Users users, HttpServletResponse response) {
@@ -63,11 +70,12 @@ public class AuthenticateController {
         EnabledUsers enabledUsers = new EnabledUsers(users.getEmail());
         enabledUsersRepository.save(enabledUsers);
         authoritiesRepository.save(new Authorities(users.getUsername(), "USER"));
-        sendEmail(enabledUsers);
+        Thread t1 = new Thread(() -> sendEmail(enabledUsers.getEmail(),SUBJECT_ENABLE_USER, HEADER_ENABLE_USER, getEmailBodyForEnableUser(enabledUsers)));
+        t1.start();
         return usersRepository.save(users);
     }
 
-    @GetMapping(value = "/enableUser")
+    @GetMapping(value = "/enable-user")
     public String enableUser(@RequestParam String email, @RequestParam String uuid, HttpServletResponse response) {
         EnabledUsers enabledUsers = enabledUsersRepository.findByEmail(email);
         if(enabledUsers != null) {
@@ -92,11 +100,37 @@ public class AuthenticateController {
             return "User not found";
         }
     }
+    @DeleteMapping("/delete-user/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
+        usersRepository.delete(users);
+        Authorities authorities = authoritiesRepository.findByUsername(users.getUsername());
+        authoritiesRepository.delete(authorities);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/update-password/{id}")
+    public Users updateUserCredentials(@PathVariable Long id, @RequestBody String password) {
+        Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
+        users.setPassword(password);
+        return usersRepository.save(users);
+    }
+
+    @GetMapping("/reset-password/{id}")
+    public String resetUserPassword(@PathVariable Long id) {
+        Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
+        String newPassword = Long.toHexString(Double.doubleToLongBits(Math.random())).substring(0,8);
+        users.setPassword(newPassword);
+        Thread t1 = new Thread(() -> sendEmail(users.getEmail(), SUBJECT_RESET_USER_PASSWORD, HEADER_RESET_USER_PASSWORD, getEmailBodyForResetPasswod(newPassword)));
+        t1.start();
+        usersRepository.save(users);
+        return "Email sent";
+    }
 
 
-    private boolean sendEmail(EnabledUsers enabledUsers) {
-        final String username = "rupniewskimikolaj@gmail.com";
-        final String password = "angelika123";
+    private void sendEmail(String addressee, String subject, String header, String body ) {
+        final String username = "services.wfis@gmail.com";
+        final String password = "Karconko123,";
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
@@ -109,33 +143,35 @@ public class AuthenticateController {
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(
-                                "services.wfis@gmail.com", "Karconko123,");
+                                username, password);
                     }
                 });
-
         try {
-
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("services.wfis@gmail.com"));
             message.setRecipients(
                     Message.RecipientType.TO,
-                    InternetAddress.parse("angelapiet001@gmail.com")
+                    InternetAddress.parse(addressee)
             );
-            message.setSubject("Mikolaj's service");
+            message.setSubject(subject);
             message.setContent(
                     "<img width='100%' height='100%' src='https://securesense.ca/wp-content/uploads/2016/07/managed-services-banner.jpg'>" +
-                            "<h1 style='text-align: center;'>Confirm your Email</h1>" +
+                            "<h1 style='text-align: center;'>" + header + "</h1>" +
                             "<br>" +
-                            "To confirm your email please paste this code into application: " + enabledUsers.getUuid(),
-
+                            body,
                     "text/html");
             Transport.send(message);
             System.out.println("Done");
 
         } catch (MessagingException e) {
             e.printStackTrace();
-            return false;
         }
-        return true;
+    }
+    private String getEmailBodyForEnableUser(EnabledUsers enabledUsers) {
+        String href = String.format("<a href='http://localhost:8080/authenticate/enableUser?email=%s&uuid=%s'>Confirm your email</a>",enabledUsers.getEmail(), enabledUsers.getUuid());
+        return "To confirm your email please follow this link:" + href;
+    }
+    private String getEmailBodyForResetPasswod(String password) {
+        return String.format("Your new password is: <b>%s</b>", password);
     }
 }

@@ -11,6 +11,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import pl.rupniewski.service_server.repository.AuthoritiesRepository;
+import pl.rupniewski.service_server.repository.EnabledUsersRepository;
+import pl.rupniewski.service_server.repository.UsersRepository;
 
 import java.io.IOException;
 
@@ -23,7 +26,12 @@ public abstract class BaseTest {
     MockMvc mvc;
     @Autowired
     private WebApplicationContext webApplicationContext;
-
+    @Autowired
+    UsersRepository usersRepository;
+    @Autowired
+    AuthoritiesRepository authoritiesRepository;
+    @Autowired
+    EnabledUsersRepository enabledUsersRepository;
 
     public void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();

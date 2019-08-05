@@ -27,12 +27,6 @@ public class UsersTests extends BaseTest {
             "90-711","Lodz","Zachodnia",
             "14","16","maciek","maciek123",true);
 
-    @Autowired
-    private UsersRepository usersRepository;
-
-    @Autowired
-    private AuthoritiesRepository authoritiesRepository;
-
     @Override
     @Before
     public void setUp() {
@@ -67,34 +61,6 @@ public class UsersTests extends BaseTest {
     }
 
     @Test
-    public void C_TestUpdateUser() throws Exception {
-        List<Users> tempUsers = usersRepository.findAll();
-        String uri = "/users/" + tempUsers.get(1).getId();
-        System.out.println(uri);
-        Users userToUpdate = tempUsers.get(1);
-        userToUpdate.setUsername("kajanowa");
-        String inputJson = super.mapToJson(userToUpdate);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
-                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(200, status);
-        String content = mvcResult.getResponse().getContentAsString();
-        System.out.println(content);
-    }
-
-    @Test
-    public void D_TestDeleteUser() throws Exception {
-        List<Users> tempUsers = usersRepository.findAll();
-        Collections.shuffle(tempUsers);
-        String uri = "/users/" + tempUsers.get(1).getId();
-        System.out.println(uri);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(200, status);
-        String content = mvcResult.getResponse().getContentAsString();
-        System.out.println(content);
-    }
-    @Test
     public void E_TestGetUserByIdValid() throws Exception {
         List<Users> tempUsers = usersRepository.findAll();
         Collections.shuffle(tempUsers);
@@ -113,31 +79,6 @@ public class UsersTests extends BaseTest {
         String uri = "/users/" + Long.MAX_VALUE;
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(404, status);
-        String content = mvcResult.getResponse().getContentAsString();
-        System.out.println(content);
-    }
-    @Test
-    public void G_TestUpdateUserByIdInvalid() throws Exception {
-        List<Users> tempUsers = usersRepository.findAll();
-        Users userToUpdate = tempUsers.get(1);
-        userToUpdate.setUsername("kajanowa");
-        String inputJson = super.mapToJson(userToUpdate);
-        String uri = "/users/" + Long.MAX_VALUE;
-        System.out.println(uri);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
-                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(404, status);
-        String content = mvcResult.getResponse().getContentAsString();
-        System.out.println(content);
-    }
-    @Test
-    public void H_TestDeleteInvalidUser() throws Exception {
-        String uri = "/users/" + Long.MAX_VALUE;
-        System.out.println(uri);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         assertEquals(404, status);
         String content = mvcResult.getResponse().getContentAsString();

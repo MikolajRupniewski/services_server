@@ -54,7 +54,7 @@ public class UsersController {
     }
 
     @PutMapping("/{id}")
-    public Users updateUser(@RequestBody Users users, @PathVariable Long id) {
+    public Users updateUserData(@RequestBody Users users, @PathVariable Long id) {
         Users updatedUser = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
         updatedUser.setFirstName(users.getFirstName());
         updatedUser.setLastName(users.getLastName());
@@ -66,18 +66,7 @@ public class UsersController {
         if (users.getApartmentNumber() != null) {
             updatedUser.setApartmentNumber(users.getApartmentNumber());
         }
-        updatedUser.setUsername(users.getUsername());
-        updatedUser.setPassword(users.getPassword());
         updatedUser.setEnabled(users.isEnabled());
         return updatedUser;
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
-        usersRepository.delete(users);
-        Authorities authorities = authoritiesRepository.findByUsername(users.getUsername());
-        authoritiesRepository.delete(authorities);
-        return ResponseEntity.ok().build();
     }
 }

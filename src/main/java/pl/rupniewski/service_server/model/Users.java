@@ -19,7 +19,7 @@ public class Users extends BaseModel {
     @Column(name = "last_name", nullable = false, length = 64)
     private String lastName;
 
-    @Column(name = "email", nullable = false, length = 64)
+    @Column(name = "email", nullable = false, length = 64, unique = true)
     private String email;
 
     @Column(name = "phone_number", nullable = false, length = 10)
