@@ -56,7 +56,8 @@ public class AuthenticateController {
     @PostMapping(value = "/register")
     public Users addUser(@RequestBody Users users, HttpServletResponse response) {
         Users duplicate = usersRepository.findByUsername(users.getUsername());
-        if(duplicate != null){
+        if(usersRepository.findByUsername(users.getUsername()) != null
+                || usersRepository.findByEmail(users.getEmail()) != null ){
             response.setStatus(HttpServletResponse.SC_CONFLICT);
             return null;
         }
@@ -74,7 +75,6 @@ public class AuthenticateController {
         t1.start();
         return usersRepository.save(users);
     }
-
     @GetMapping(value = "/enable-user")
     public String enableUser(@RequestParam String email, @RequestParam String uuid, HttpServletResponse response) {
         EnabledUsers enabledUsers = enabledUsersRepository.findByEmail(email);
@@ -112,6 +112,8 @@ public class AuthenticateController {
     @PutMapping("/update-password/{id}")
     public Users updateUserCredentials(@PathVariable Long id, @RequestBody String password) {
         Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
+        System.out.println(users.getUsername());
+        System.out.println(password);
         users.setPassword(password);
         return usersRepository.save(users);
     }
@@ -168,7 +170,7 @@ public class AuthenticateController {
         }
     }
     private String getEmailBodyForEnableUser(EnabledUsers enabledUsers) {
-        String href = String.format("<a href='http://localhost:8080/authenticate/enableUser?email=%s&uuid=%s'>Confirm your email</a>",enabledUsers.getEmail(), enabledUsers.getUuid());
+        String href = String.format("<a href='http://localhost:8080/authenticate/enable-user?email=%s&uuid=%s'>Confirm your email</a>",enabledUsers.getEmail(), enabledUsers.getUuid());
         return "To confirm your email please follow this link:" + href;
     }
     private String getEmailBodyForResetPasswod(String password) {
