@@ -1,6 +1,5 @@
 package pl.rupniewski.service_server.controller;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -17,12 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @RestController
 public class FileController {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
+    private static final Logger LOGGER = Logger.getLogger(FileController.class.getName());
 
     @Autowired
     private FileStorageService fileStorageService;
@@ -32,6 +32,7 @@ public class FileController {
 
     @PostMapping(value = "/uploadFile", consumes = "multipart/form-data")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+        LOGGER.info("Uploading file...");
         String fileName = fileStorageService.storeFile(file);
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
@@ -44,14 +45,15 @@ public class FileController {
 
     @PostMapping("/uploadMultipleFiles")
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        return Arrays.asList(files)
-                .stream()
-                .map(file -> uploadFile(file))
+        LOGGER.info("Uploading multiple files");
+        return Arrays.stream(files)
+                .map(this::uploadFile)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
+        LOGGER.info("Downloading file...");
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
         System.out.println(resource.toString());
@@ -60,7 +62,7 @@ public class FileController {
         try {
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
         } catch (IOException ex) {
-            logger.info("Could not determine file type.");
+            LOGGER.warning("Could not determine file type.");
         }
 
         // Fallback to the default content type if type could not be determined

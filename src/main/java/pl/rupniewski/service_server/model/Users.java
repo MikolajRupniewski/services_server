@@ -178,6 +178,11 @@ public class Users extends BaseModel {
         this.email = email;
     }
 
+    public static String hashPassword(String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.encode(password);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
