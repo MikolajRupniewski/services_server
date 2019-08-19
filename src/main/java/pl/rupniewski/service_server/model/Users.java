@@ -81,6 +81,11 @@ public class Users extends BaseModel {
     public Users() {
     }
 
+    public static String hashPassword(String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.encode(password);
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -176,11 +181,6 @@ public class Users extends BaseModel {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public static String hashPassword(String password) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        return bCryptPasswordEncoder.encode(password);
     }
 
     @Override

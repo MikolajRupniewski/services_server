@@ -1,6 +1,5 @@
 package pl.rupniewski.service_server.service.email;
 
-import pl.rupniewski.service_server.model.EnabledUsers;
 import pl.rupniewski.service_server.model.Users;
 
 public class ResetPasswordEmail extends BaseEmail {
@@ -10,7 +9,8 @@ public class ResetPasswordEmail extends BaseEmail {
     private static String getEmailBody(String password) {
         return String.format("Your new password is: <b>%s</b>", password);
     }
-    public static void sendEmail(Users user, String newPassword){
+
+    public static void sendEmail(Users user, String newPassword) {
         sendEmail(user.getEmail(), SUBJECT, HEADER, getEmailBody(newPassword));
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "services")
+@Table(name = "shop")
 public class Shop extends BaseModel {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

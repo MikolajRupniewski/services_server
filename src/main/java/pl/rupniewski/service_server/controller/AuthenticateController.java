@@ -9,11 +9,7 @@ import pl.rupniewski.service_server.model.Users;
 import pl.rupniewski.service_server.service.email.ConfirmationEmail;
 import pl.rupniewski.service_server.service.email.ResetPasswordEmail;
 
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 
@@ -105,7 +101,7 @@ public class AuthenticateController extends BaseController {
     public Users updateUserCredentials(@PathVariable Long id, @RequestBody String newPassword, @RequestBody String oldPassword) {
         LOGGER.info("Updating user's password");
         Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
-        if(!users.getPassword().equals(Users.hashPassword(oldPassword))) {
+        if (!users.getPassword().equals(Users.hashPassword(oldPassword))) {
             LOGGER.warning("Password does not match");
             return null;
         }
@@ -129,7 +125,6 @@ public class AuthenticateController extends BaseController {
         usersRepository.save(users);
         return "Email has been sent";
     }
-
 
 
 }

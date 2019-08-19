@@ -1,7 +1,5 @@
 package pl.rupniewski.service_server.service.email;
 
-import pl.rupniewski.service_server.model.EnabledUsers;
-
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -10,6 +8,7 @@ import java.util.logging.Logger;
 
 abstract class BaseEmail {
     private final static Logger LOGGER = Logger.getLogger(BaseEmail.class.getName());
+
     static void sendEmail(String addressee, String subject, String header, String body) {
         final String username = "services.wfis@gmail.com";
         final String password = "Karconko123,";

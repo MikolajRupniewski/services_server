@@ -10,6 +10,7 @@ public class ConfirmationEmail extends BaseEmail {
         String href = String.format("<a href='http://localhost:8080/authenticate/enable-user?email=%s&uuid=%s'>Confirm your email</a>", enabledUsers.getEmail(), enabledUsers.getUuid());
         return "To confirm your email please follow this link:" + href;
     }
+
     public static void sendEmail(EnabledUsers enabledUsers) {
         sendEmail(enabledUsers.getEmail(), SUBJECT, HEADER, getEmailBody(enabledUsers));
     }
