@@ -56,6 +56,13 @@ public class AuthenticateController extends BaseController {
         LOGGER.info("Confirmation email sent");
         return usersRepository.save(users);
     }
+//    @GetMapping(value = "/dummy")
+//    public Users addDummyUser() {
+//        final Users dummyUser = new Users("Maciej", "Kowal", "rupniewskimikolaj@gmail.com", "556848526",
+//                "90-711", "Lodz", "Zachodnia",
+//                "14", "16", "maciek", "maciek123", false);
+//        return usersRepository.save(dummyUser);
+//    }
 
     @GetMapping(value = "/enable-user")
     public String enableUser(@RequestParam String email, @RequestParam String uuid, HttpServletResponse response) {

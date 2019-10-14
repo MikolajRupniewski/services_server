@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "geo_location")
+@Table(name = "geo_locations")
 public class GeoLocation extends BaseModel {
 
     @Column(name = "longitude")

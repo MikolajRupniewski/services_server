@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.time.Duration;
 
 @Entity
-@Table(name = "service")
+@Table(name = "services")
 public class Service extends BaseModel {
 
     @Id

@@ -22,7 +22,7 @@ public class UsersTests extends BaseTest {
 
     private final Users dummyUser = new Users("Maciej", "Kowal", "maciekkowal@gmail.com", "556848526",
             "90-711", "Lodz", "Zachodnia",
-            "14", "16", "maciek", "maciek123", true);
+            "14", "16", "maciek", "maciek123", false);
 
     @Override
     @Before

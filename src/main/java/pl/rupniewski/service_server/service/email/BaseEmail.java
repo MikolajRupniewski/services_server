@@ -39,7 +39,7 @@ abstract class BaseEmail {
                     "<img width='100%' height='100%' src='https://securesense.ca/wp-content/uploads/2016/07/managed-services-banner.jpg'>" +
                             "<h1 style='text-align: center;'>" + header + "</h1>" +
                             "<br>" +
-                            body,
+                            "<h3>" + body + "</h3>",
                     "text/html");
             Transport.send(message);
             System.out.println("Done");

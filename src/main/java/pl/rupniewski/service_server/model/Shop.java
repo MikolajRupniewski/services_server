@@ -1,5 +1,7 @@
 package pl.rupniewski.service_server.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -7,11 +9,15 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "shop")
+@Table(name = "shops")
 public class Shop extends BaseModel {
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "shop_categories")
+    @ManyToMany(cascade ={
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinColumn(name = "shop_category")
+    @JsonIgnoreProperties("shops")
     private List<Category> categories = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -29,6 +35,10 @@ public class Shop extends BaseModel {
     @Enumerated(EnumType.STRING)
     @Column(name = "service_place")
     private ServicePlace servicePlace;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="services")
+    private List<Service> services;
 
     @Column(name = "max_distance")
     private Double maxDistance = 0.0;
@@ -74,5 +84,21 @@ public class Shop extends BaseModel {
 
     public void setServicePlace(ServicePlace servicePlace) {
         this.servicePlace = servicePlace;
+    }
+
+    public List<Service> getServices() {
+        return services;
+    }
+
+    public void setServices(List<Service> services) {
+        this.services = services;
+    }
+
+    public Double getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(Double maxDistance) {
+        this.maxDistance = maxDistance;
     }
 }

@@ -1,20 +1,20 @@
 package pl.rupniewski.service_server.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "category")
+@Table(name = "categories")
 public class Category extends BaseModel {
 
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany(mappedBy = "categories", cascade = CascadeType.PERSIST)
+    @JsonIgnoreProperties("categories")
     private List<Shop> shops = new ArrayList<>();
 
     public Category(String name) {
