@@ -37,4 +37,12 @@ public class GeoLocation extends BaseModel {
     public void setLatitude(float latitude) {
         this.latitude = latitude;
     }
+
+    @Override
+    public String toString() {
+        return "GeoLocation{" +
+                "longitude=" + longitude +
+                ", latitude=" + latitude +
+                '}';
+    }
 }

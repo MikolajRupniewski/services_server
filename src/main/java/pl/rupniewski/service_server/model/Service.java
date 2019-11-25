@@ -18,6 +18,9 @@ public class Service extends BaseModel {
     @Column(name = "duration")
     private Duration duration;
 
+    @Column(name = "duration_str")
+    public String durationStr;
+
     @Column(name = "price", scale = 2)
     private Double price;
 
@@ -68,7 +71,9 @@ public class Service extends BaseModel {
     public void setDuration(Duration duration) {
         this.duration = duration;
     }
-
+    public void setDurationFromString() {
+        this.duration = Duration.ofMinutes(Long.parseLong(durationStr));
+    }
     public Double getPrice() {
         return price;
     }

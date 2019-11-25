@@ -18,4 +18,7 @@ public abstract class BaseController {
 
     @Autowired
     ServiceRepository serviceRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 }

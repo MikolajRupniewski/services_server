@@ -13,7 +13,7 @@ public class Category extends BaseModel {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "categories", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
     @JsonIgnoreProperties("categories")
     private List<Shop> shops = new ArrayList<>();
 
@@ -38,5 +38,13 @@ public class Category extends BaseModel {
 
     public void setShops(List<Shop> shops) {
         this.shops = shops;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "name='" + name + '\'' +
+                ", shops=" + shops +
+                '}';
     }
 }

@@ -15,7 +15,7 @@ public class ResourceNotFundException extends RuntimeException {
 
     public ResourceNotFundException(String resourceName, String fieldName, Object fieldValue) {
         super(String.format("%s not found with %s : %s", resourceName, fieldName, fieldValue));
-        LOGGER.warning("User is not found");
+        LOGGER.warning(String.format("%s not found with %s : %s", resourceName, fieldName, fieldValue));
         this.resourceName = resourceName;
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;

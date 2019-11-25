@@ -1,6 +1,8 @@
 package pl.rupniewski.service_server.controller;
 
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pl.rupniewski.service_server.exception.ResourceNotFundException;
 import pl.rupniewski.service_server.model.Authorities;
@@ -30,6 +32,7 @@ import java.util.logging.Logger;
 }
  */
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/authenticate")
 public class AuthenticateController extends BaseController {
     private final Logger LOGGER = Logger.getLogger(AuthenticateController.class.getName());
@@ -37,11 +40,13 @@ public class AuthenticateController extends BaseController {
     @PostMapping(value = "/register")
     public Users addUser(@RequestBody Users users, HttpServletResponse response) {
         LOGGER.info("Starting registering new user");
-        Users duplicate = usersRepository.findByUsername(users.getUsername());
+        System.out.println(usersRepository.findByUsername(users.getUsername()));
+        System.out.println(usersRepository.findByEmail(users.getEmail()));
         if (usersRepository.findByUsername(users.getUsername()) != null
                 || usersRepository.findByEmail(users.getEmail()) != null) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
             LOGGER.warning("Email or username is already taken");
+            LOGGER.warning(users.toString());
             return null;
         }
         users.setEnabled(false);
@@ -54,6 +59,7 @@ public class AuthenticateController extends BaseController {
         Thread t1 = new Thread(() -> ConfirmationEmail.sendEmail(enabledUsers));
         t1.start();
         LOGGER.info("Confirmation email sent");
+        response.setStatus(HttpServletResponse.SC_CREATED);
         return usersRepository.save(users);
     }
 //    @GetMapping(value = "/dummy")
@@ -105,10 +111,11 @@ public class AuthenticateController extends BaseController {
     }
 
     @PutMapping("/update-password/{id}")
-    public Users updateUserCredentials(@PathVariable Long id, @RequestBody String newPassword, @RequestBody String oldPassword) {
+    public Users updateUserCredentials(@PathVariable Long id, @RequestParam String newPassword, @RequestParam String oldPassword) {
         LOGGER.info("Updating user's password");
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
-        if (!users.getPassword().equals(Users.hashPassword(oldPassword))) {
+        if (!bCryptPasswordEncoder.matches(oldPassword, users.getPassword())) {
             LOGGER.warning("Password does not match");
             return null;
         }
@@ -116,22 +123,63 @@ public class AuthenticateController extends BaseController {
         LOGGER.info("User's password updated");
         return usersRepository.save(users);
     }
-
-    @GetMapping("/reset-password/{id}")
-    public String resetUserPassword(@PathVariable Long id, String email) {
-        LOGGER.info("Resetting user's password");
+    @PutMapping("/update-email/{id}")
+    public Users updateUserEmail(@PathVariable Long id, @RequestParam String newEmail, @RequestParam String oldEmail) {
+        LOGGER.info("Updating user's email");
         Users users = usersRepository.findById(id).orElseThrow(() -> new ResourceNotFundException("User", "id", id));
-        if (!users.getEmail().equals(email)) {
+        if(!users.getEmail().equals(oldEmail)) {
+            LOGGER.warning("Email does not match");
+            return null;
+        }
+        users.setEmail(newEmail);
+        LOGGER.info("User's email updated");
+        return usersRepository.save(users);
+    }
+
+    @GetMapping("/reset-password")
+    public ResponseEntity<?> resetUserPassword(@RequestParam String email) {
+        LOGGER.info("Resetting user's password");
+        Users users = usersRepository.findByEmail(email);
+        if (users == null) {
             LOGGER.warning("Wrong email address");
-            return "Wrong email address";
+            return ResponseEntity.notFound().build();
         }
         String newPassword = Long.toHexString(Double.doubleToLongBits(Math.random())).substring(0, 8);
         users.setPassword(newPassword);
         Thread t1 = new Thread(() -> ResetPasswordEmail.sendEmail(users, newPassword));
         t1.start();
         usersRepository.save(users);
-        return "Email has been sent";
+        return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/sign-in")
+    public ResponseEntity<?> signIn(@RequestParam String username, @RequestParam String password){
+        Users users = usersRepository.findByUsername(username);
+        if (users == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        if (bCryptPasswordEncoder.matches(password, users.getPassword())) {
+            if(users.isEnabled()) {
+                Authorities auth = authoritiesRepository.findByUsername(users.getUsername());
+                LOGGER.info("Role: " + auth.getAuthority());
+                if(auth.getAuthority().equals("ROLE_USER")) {
+                    return ResponseEntity.ok().build();
+                } else {
+                    return ResponseEntity.accepted().build();
+                }
+
+            }
+            else {
+                return ResponseEntity.notFound().build();
+            }
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/get-user-by-username")
+    public Users geUserByUsername(@RequestParam String username) {
+        return usersRepository.findByUsername(username);
+    }
 
 }

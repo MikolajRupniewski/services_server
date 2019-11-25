@@ -14,8 +14,6 @@ import pl.rupniewski.service_server.repository.UsersRepository;
 @EnableConfigurationProperties({
         FileStorageProperties.class
 })
-
-
 public class ServiceServerApplication {
 
     public static void main(String[] args) {

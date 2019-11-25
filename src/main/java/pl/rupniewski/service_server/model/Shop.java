@@ -12,17 +12,35 @@ import java.util.List;
 @Table(name = "shops")
 public class Shop extends BaseModel {
 
-    @ManyToMany(cascade ={
+    @ManyToOne( fetch=FetchType.EAGER, cascade ={
             CascadeType.PERSIST,
             CascadeType.MERGE
     })
-    @JoinColumn(name = "shop_category")
+    @JoinColumn(name = "category_id")
     @JsonIgnoreProperties("shops")
-    private List<Category> categories = new ArrayList<>();
+    private Category category;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "users_id", referencedColumnName = "id")
+    @Column(name = "name")
+    private String name;
+
+    @OneToOne(mappedBy = "shop", fetch = FetchType.EAGER,
+            cascade = {
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.DETACH,
+                    CascadeType.REMOVE
+
+            })
     private Users users;
+    private Long userId;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geoLocation_id", referencedColumnName = "id")
@@ -40,18 +58,25 @@ public class Shop extends BaseModel {
     @JoinColumn(name="services")
     private List<Service> services;
 
-    @Column(name = "max_distance")
     private Double maxDistance = 0.0;
 
     public Shop() {
     }
 
-    public List<Category> getCategories() {
-        return categories;
+    public String getName() {
+        return name;
     }
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public Users getUsers() {
@@ -100,5 +125,18 @@ public class Shop extends BaseModel {
 
     public void setMaxDistance(Double maxDistance) {
         this.maxDistance = maxDistance;
+    }
+
+    @Override
+    public String toString() {
+        return "Shop{" +
+                "category=" + category +
+                ", users=" + users +
+                ", geoLocation=" + geoLocation +
+                ", pictures=" + pictures +
+                ", servicePlace=" + servicePlace +
+                ", services=" + services +
+                ", maxDistance=" + maxDistance +
+                '}';
     }
 }

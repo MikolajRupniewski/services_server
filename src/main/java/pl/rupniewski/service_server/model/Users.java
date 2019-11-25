@@ -2,10 +2,10 @@ package pl.rupniewski.service_server.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -49,6 +49,18 @@ public class Users extends BaseModel {
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
+    }
+
     public Users(String firstName, String lastName, String email, String phoneNumber, String zipCode, String city, String streetName, String houseNumber, String apartmentNumber, String username, String password, boolean enabled) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -82,8 +94,8 @@ public class Users extends BaseModel {
     }
 
     public static String hashPassword(String password) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        return bCryptPasswordEncoder.encode(password);
+        PasswordEncoder pw= PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return pw.encode(password);
     }
 
     public String getFirstName() {
@@ -204,5 +216,23 @@ public class Users extends BaseModel {
     @Override
     public int hashCode() {
         return Objects.hash(getFirstName(), getLastName(), getPhoneNumber(), getZipCode(), getCity(), getStreetName(), getHouseNumber(), getApartmentNumber(), getUsername(), getPassword(), isEnabled());
+    }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", city='" + city + '\'' +
+                ", streetName='" + streetName + '\'' +
+                ", houseNumber='" + houseNumber + '\'' +
+                ", apartmentNumber='" + apartmentNumber + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", enabled=" + enabled +
+                '}';
     }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/users")
 
 public class UsersController extends BaseController {
@@ -53,6 +54,7 @@ public class UsersController extends BaseController {
             updatedUser.setApartmentNumber(users.getApartmentNumber());
         }
         updatedUser.setEnabled(users.isEnabled());
+        System.out.println(usersRepository.save(updatedUser));
         return updatedUser;
     }
 }
