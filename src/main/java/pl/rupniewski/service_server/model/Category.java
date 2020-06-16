@@ -44,7 +44,6 @@ public class Category extends BaseModel {
     public String toString() {
         return "Category{" +
                 "name='" + name + '\'' +
-                ", shops=" + shops +
                 '}';
     }
 }

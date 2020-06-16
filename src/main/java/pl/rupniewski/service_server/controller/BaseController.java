@@ -21,4 +21,11 @@ public abstract class BaseController {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    ChatRepository chatRepository;
+
 }

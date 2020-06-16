@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
+// TODO change shop name to something better
 @Entity
 @Table(name = "shops")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Shop extends BaseModel {
 
     @ManyToOne( fetch=FetchType.EAGER, cascade ={
@@ -23,24 +24,6 @@ public class Shop extends BaseModel {
     @Column(name = "name")
     private String name;
 
-    @OneToOne(mappedBy = "shop", fetch = FetchType.EAGER,
-            cascade = {
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.DETACH,
-                    CascadeType.REMOVE
-
-            })
-    private Users users;
-    private Long userId;
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geoLocation_id", referencedColumnName = "id")
@@ -54,9 +37,25 @@ public class Shop extends BaseModel {
     @Column(name = "service_place")
     private ServicePlace servicePlace;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.ALL})
     @JoinColumn(name="services")
     private List<Service> services;
+
+    @OneToMany(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "employees")
+    private List<Employee> employees;
+
+    @OneToMany(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "orders")
+    private List<Order> orders = new ArrayList<>();
+
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
+    }
 
     private Double maxDistance = 0.0;
 
@@ -77,14 +76,6 @@ public class Shop extends BaseModel {
 
     public void setCategory(Category category) {
         this.category = category;
-    }
-
-    public Users getUsers() {
-        return users;
-    }
-
-    public void setUsers(Users users) {
-        this.users = users;
     }
 
     public GeoLocation getGeoLocation() {
@@ -127,15 +118,25 @@ public class Shop extends BaseModel {
         this.maxDistance = maxDistance;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     @Override
     public String toString() {
         return "Shop{" +
                 "category=" + category +
-                ", users=" + users +
+                ", name='" + name + '\'' +
                 ", geoLocation=" + geoLocation +
                 ", pictures=" + pictures +
                 ", servicePlace=" + servicePlace +
                 ", services=" + services +
+                ", employees=" + employees +
+                ", orders=" + orders +
                 ", maxDistance=" + maxDistance +
                 '}';
     }

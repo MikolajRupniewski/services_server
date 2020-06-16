@@ -137,48 +137,57 @@ public class AuthenticateController extends BaseController {
     }
 
     @GetMapping("/reset-password")
-    public ResponseEntity<?> resetUserPassword(@RequestParam String email) {
+    public Users resetUserPassword(@RequestParam String email, HttpServletResponse response) {
         LOGGER.info("Resetting user's password");
         Users users = usersRepository.findByEmail(email);
         if (users == null) {
             LOGGER.warning("Wrong email address");
-            return ResponseEntity.notFound().build();
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
         }
         String newPassword = Long.toHexString(Double.doubleToLongBits(Math.random())).substring(0, 8);
         users.setPassword(newPassword);
         Thread t1 = new Thread(() -> ResetPasswordEmail.sendEmail(users, newPassword));
         t1.start();
+        response.setStatus(HttpServletResponse.SC_OK);
         usersRepository.save(users);
-        return ResponseEntity.ok().build();
+        return users;
     }
 
     @GetMapping("/sign-in")
-    public ResponseEntity<?> signIn(@RequestParam String username, @RequestParam String password){
+    public Users signIn(@RequestParam String username, @RequestParam String password, HttpServletResponse response){
         Users users = usersRepository.findByUsername(username);
         if (users == null) {
-            return ResponseEntity.badRequest().build();
+            response.setStatus(404);
+            return null;
         }
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        if (bCryptPasswordEncoder.matches(password, users.getPassword())) {
+        boolean isValid = bCryptPasswordEncoder.matches(password, users.getPassword());
+        System.out.println("is valid?: " + isValid);
+        if (isValid) {
             if(users.isEnabled()) {
                 Authorities auth = authoritiesRepository.findByUsername(users.getUsername());
                 LOGGER.info("Role: " + auth.getAuthority());
                 if(auth.getAuthority().equals("ROLE_USER")) {
-                    return ResponseEntity.ok().build();
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return users;
                 } else {
-                    return ResponseEntity.accepted().build();
+                    response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                    return users;
                 }
-
             }
             else {
-                return ResponseEntity.notFound().build();
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return null;
             }
         }
-        return ResponseEntity.badRequest().build();
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return null;
     }
 
     @GetMapping("/get-user-by-username")
     public Users geUserByUsername(@RequestParam String username) {
+        System.out.println(usersRepository.findByUsername(username));
         return usersRepository.findByUsername(username);
     }
 

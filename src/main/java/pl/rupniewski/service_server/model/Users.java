@@ -1,11 +1,13 @@
 package pl.rupniewski.service_server.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -49,9 +51,20 @@ public class Users extends BaseModel {
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shop_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Shop shop;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH,})
+    @JoinColumn(name="orders")
+    private List<Order> orders;
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
 
     public Shop getShop() {
         return shop;
@@ -91,6 +104,21 @@ public class Users extends BaseModel {
     }
 
     public Users() {
+    }
+
+    public Users(String username, String password, boolean enabled, String email) {
+        this.username = username;
+        setPassword(password);
+        this.enabled = enabled;
+        this.email = email;
+        this.firstName = "";
+        this.lastName = "";
+        this.phoneNumber = "";
+        this.zipCode = "";
+        this.city = "";
+        this.streetName = "";
+        this.houseNumber = "";
+        this.apartmentNumber = "";
     }
 
     public static String hashPassword(String password) {

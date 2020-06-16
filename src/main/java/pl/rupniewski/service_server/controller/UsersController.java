@@ -3,8 +3,11 @@ package pl.rupniewski.service_server.controller;
 
 import org.springframework.web.bind.annotation.*;
 import pl.rupniewski.service_server.exception.ResourceNotFundException;
+import pl.rupniewski.service_server.model.Order;
+import pl.rupniewski.service_server.model.Shop;
 import pl.rupniewski.service_server.model.Users;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,6 +35,7 @@ public class UsersController extends BaseController {
         LOGGER.info("Receiving user for city=" + city);
         return usersRepository.findByCity(city);
     }
+
 
     @GetMapping(value = "", params = {"zipCode"})
     public List<Users> getUsersByZipCode(String zipCode) {

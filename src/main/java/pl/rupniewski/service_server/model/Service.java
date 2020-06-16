@@ -1,9 +1,13 @@
 package pl.rupniewski.service_server.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.time.Duration;
 
 @Entity
+@JsonIgnoreProperties
 @Table(name = "services")
 public class Service extends BaseModel {
 
@@ -87,7 +91,7 @@ public class Service extends BaseModel {
         return "Service{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", duration=" + duration.toMinutes() + " minutes" +
+                ", duration=" + durationStr + " minutes" +
                 ", price=" + price +
                 '}';
     }

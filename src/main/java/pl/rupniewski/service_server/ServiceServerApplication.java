@@ -10,6 +10,8 @@ import pl.rupniewski.service_server.properties.FileStorageProperties;
 import pl.rupniewski.service_server.repository.AuthoritiesRepository;
 import pl.rupniewski.service_server.repository.UsersRepository;
 
+import java.util.Objects;
+
 @SpringBootApplication
 @EnableConfigurationProperties({
         FileStorageProperties.class
@@ -17,6 +19,6 @@ import pl.rupniewski.service_server.repository.UsersRepository;
 public class ServiceServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ServiceServerApplication.class, args);
+       SpringApplication.run(ServiceServerApplication.class, args);
     }
 }
